@@ -15,4 +15,5 @@ DEFINE_EXCEPTION(CouldNotReadFile, "Could not read the given file");
 DEFINE_EXCEPTION(CouldNotReadFilesList, "Could not find files list");
 DEFINE_EXCEPTION(ConflictingFilenames, "Files list contains files with conflicting names");
 DEFINE_EXCEPTION(FileAlreadyExists, "File already exists");
+DEFINE_EXCEPTION(UnexpectedEof, "Unexpected end of file");
 
