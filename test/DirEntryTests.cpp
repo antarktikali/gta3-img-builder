@@ -7,14 +7,14 @@ bool operator==(const DirEntry& left, const DirEntry& right)
   return 0 == memcmp(&left, &right, sizeof(DirEntry));
 }
 
-TEST(ShouldThrowExceptionIfDirFileNotReadable, DirWriterTests)
+TEST(ShouldThrowExceptionIfDirFileNotReadable, DirEntryTests)
 {
   EXPECT_THROW({
     DirEntry::ParseDirFile("non_existing");
   }, CouldNotReadFile);
 }
 
-TEST(ShouldReadValidDirFileCorrectly, DirWriterTests)
+TEST(ShouldReadValidDirFileCorrectly, DirEntryTests)
 {
   const auto result = DirEntry::ParseDirFile("valid1.dir");
 
@@ -34,7 +34,7 @@ TEST(ShouldReadValidDirFileCorrectly, DirWriterTests)
   EXPECT_EQ(expected, result);
 }
 
-TEST(ShouldThrowExceptionIfDirFileSizeIsWrong, DirWriterTests)
+TEST(ShouldThrowExceptionIfDirFileSizeIsWrong, DirEntryTests)
 {
   EXPECT_THROW({
     DirEntry::ParseDirFile("invalid1.dir");
