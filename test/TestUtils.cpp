@@ -1,5 +1,7 @@
 #include "TestUtils.h"
 
+#include <fstream>
+
 std::vector<uint8_t> HexStrToBytes(const std::string& hexStr)
 {
   std::vector<uint8_t> bytes;
@@ -17,5 +19,21 @@ std::vector<uint8_t> GetWrittenBytes(const std::stringstream& stream)
 {
   const std::string streamStr = stream.str();
   return {streamStr.begin(), streamStr.end()};
+}
+
+std::vector<uint8_t> GetWrittenBytes(const std::filesystem::path& path)
+{
+  std::ifstream file(path, std::ios::in | std::ios::binary);
+  std::stringstream strStream;
+  strStream << file.rdbuf();
+  return GetWrittenBytes(strStream);
+}
+
+std::stringstream CreateStream(const std::string& hexStr)
+{
+  const auto bytes = HexStrToBytes(hexStr);
+
+  std::stringstream stream(std::string(bytes.begin(), bytes.end()));
+  return stream;
 }
 

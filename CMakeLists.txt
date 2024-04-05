@@ -14,6 +14,7 @@ add_library(img-builder-app
   src/ArchiveBuilder.cpp
   src/Application.cpp
   src/DirEntry.cpp
+  src/ImgExtracter.cpp
 )
 
 include(FetchContent)
@@ -34,6 +35,7 @@ add_executable(tests
   test/ArchiveBuilderTests.cpp
   test/FileListReaderTests.cpp
   test/DirEntryTests.cpp
+  test/ImgExtracterTests.cpp
 )
 target_link_libraries(tests GTest::gtest_main)
 target_link_libraries(tests img-builder-app)

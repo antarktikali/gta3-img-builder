@@ -16,4 +16,5 @@ DEFINE_EXCEPTION(CouldNotReadFilesList, "Could not find files list");
 DEFINE_EXCEPTION(ConflictingFilenames, "Files list contains files with conflicting names");
 DEFINE_EXCEPTION(FileAlreadyExists, "File already exists");
 DEFINE_EXCEPTION(UnexpectedEof, "Unexpected end of file");
+DEFINE_EXCEPTION(CouldNotReadSector, "Could not read the sector in .img file");
 
