@@ -1,6 +1,7 @@
 #include "ImgExtracter.h"
 
 #include <fstream>
+#include <iostream>
 
 #include "DirEntry.h"
 #include "Exceptions.h"
@@ -49,5 +50,7 @@ void ImgExtracter::ProcessEntry(const DirEntry& entry)
     const auto& bytes = ReadSector(entry.sectorStart + i);
     out.write(bytes.data(), std::min(sectorSize, bytes.size()));
   }
+
+  std::cout << outFile.string() << std::endl;
 }
 
