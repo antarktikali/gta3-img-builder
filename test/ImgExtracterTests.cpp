@@ -1,4 +1,5 @@
 #include <filesystem>
+#include <fstream>
 #include <gtest/gtest.h>
 #include "ImgExtracter.h"
 #include "Exceptions.h"
@@ -32,21 +33,27 @@ class ImgExtracterTests : public testing::Test
     std::filesystem::path tmpDir;
 };
 
-TEST_F(ImgExtracterTests, ShouldThrowExceptionIfFileAlredyExistsInOutDir)
+TEST_F(ImgExtracterTests, ShouldThrowExceptionIfOutputDirectoryIsAFile)
 {
-  const std::vector<DirEntry> entries = {
-    {
-      .sectorStart = 0,
-      .sectorCount = 1,
-      .fileName = "file3.test"
-    }
-  };
-
-  std::stringstream stream = CreateStream("AABBCCDD");
+  std::stringstream stream = CreateStream("");
+  std::filesystem::path outDir = GetTmpDir() / "new_file";
+  std::ofstream newFile(outDir);
+  newFile << "\0";
+  EXPECT_TRUE(std::filesystem::exists(outDir));
 
   EXPECT_THROW({
-    ImgExtracter(1, entries, stream, "folder1").Extract();
-  }, FileAlreadyExists);
+    ImgExtracter(1, {}, stream, outDir);
+  }, OutputPathNotEmptyDirectory);
+}
+
+TEST_F(ImgExtracterTests, ShouldThrowExceptionIfOutputDirectoryIsNotEmpty)
+{
+  std::stringstream stream = CreateStream("");
+  std::filesystem::create_directory(GetTmpDir() / "new_dir");
+
+  EXPECT_THROW({
+    ImgExtracter(1, {}, stream, GetTmpDir());
+  }, OutputPathNotEmptyDirectory);
 }
 
 TEST_F(ImgExtracterTests, ShouldWriteNewFilesCorrectly)
@@ -91,6 +98,41 @@ TEST_F(ImgExtracterTests, ShouldCreateNecessaryDirectoriesWhenCreatingFiles)
   ImgExtracter(1, entries, stream, outPath).Extract();
 
   EXPECT_TRUE(std::filesystem::exists(outPath / "test.file"));
+}
+
+TEST_F(ImgExtracterTests, ShouldCreateNewDirectoriesForDuplicateFiles)
+{
+  const std::vector<DirEntry> entries = {
+    {
+      .sectorStart = 0,
+      .sectorCount = 1,
+      .fileName = "test.file"
+    },
+    {
+      .sectorStart = 1,
+      .sectorCount = 1,
+      .fileName = "test.file"
+    },
+    {
+      .sectorStart = 2,
+      .sectorCount = 1,
+      .fileName = "test.file"
+    }
+  };
+
+  std::stringstream stream = CreateStream("AABBCC");
+
+  const std::filesystem::path outPath = GetTmpDir();
+  ImgExtracter(1, entries, stream, outPath).Extract();
+
+  EXPECT_TRUE(std::filesystem::exists(outPath / "test.file"));
+  EXPECT_EQ(HexStrToBytes("AA"), GetWrittenBytes(outPath / "test.file"));
+
+  EXPECT_TRUE(std::filesystem::exists(outPath / "1" / "test.file"));
+  EXPECT_EQ(HexStrToBytes("BB"), GetWrittenBytes(outPath / "1" / "test.file"));
+
+  EXPECT_TRUE(std::filesystem::exists(outPath / "2" / "test.file"));
+  EXPECT_EQ(HexStrToBytes("CC"), GetWrittenBytes(outPath / "2" /"test.file"));
 }
 
 TEST_F(ImgExtracterTests, ShouldWriteNewFileCorrectly)

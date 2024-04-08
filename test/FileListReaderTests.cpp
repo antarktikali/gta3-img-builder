@@ -21,10 +21,15 @@ TEST(ShouldReadValidFilesList, FileListReaderTests)
   EXPECT_EQ(expected_files, files);
 }
 
-TEST(ShouldFailIfFilesListContainsConflictingFilenames, FileListReaderTests)
+TEST(ShouldNotFailIfFilesListContainsConflictingFilenames, FileListReaderTests)
 {
-  EXPECT_THROW({
-      FileListReader::Read("test_conflicting_filenames_list");
-  }, ConflictingFilenames);
+  const auto& files = FileListReader::Read("test_conflicting_filenames_list");
+  const std::vector<std::filesystem::path> expected_files = {
+    {"somefile1.ext"},
+    {"somefile2.ext"},
+    {"somepath/somefile1.ext"}
+  };
+
+  EXPECT_EQ(expected_files, files);
 }
 

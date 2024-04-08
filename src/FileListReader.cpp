@@ -1,7 +1,6 @@
 #include "FileListReader.h"
 
 #include <fstream>
-#include <unordered_set>
 
 #include "Exceptions.h"
 
@@ -19,23 +18,6 @@ std::vector<std::filesystem::path> FileListReader::Read(const std::filesystem::p
     }
   }
 
-  if (HasConflictingFilenames(pathList)) {
-    throw ConflictingFilenames();
-  }
-
   return pathList;
-}
-
-bool FileListReader::HasConflictingFilenames(const std::vector<std::filesystem::path>& paths)
-{
-  std::unordered_set<std::filesystem::path> filenames;
-  for (const auto& path : paths) {
-    if (filenames.contains(path.filename())) {
-      return true;
-    }
-    filenames.insert(path.filename());
-  }
-
-  return false;
 }
 

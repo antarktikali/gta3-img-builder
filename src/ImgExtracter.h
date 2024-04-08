@@ -19,10 +19,11 @@ class ImgExtracter
   private:
     std::vector<char> ReadSector(const uint32_t);
     void ProcessEntry(const DirEntry&);
+    std::filesystem::path GetOutputPathForEntry(const DirEntry&) const;
 
     const size_t sectorSize;
     const std::vector<DirEntry>& entries;
-    const std::filesystem::path& outDir;
+    const std::filesystem::path outDir;
     std::istream& imgFile;
 };
 

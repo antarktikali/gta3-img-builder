@@ -34,6 +34,32 @@ TEST(TestBuildingArchiveWith3Files, ArchiveBuilderTests)
   EXPECT_EQ(expectedDir, GetWrittenBytes(dirOut));
 }
 
+TEST(TestBuildingArchiveWithDuplicateFilenames, ArchiveBuilderTests)
+{
+  std::stringstream dirOut, imgOut;
+  DirWriter dirWriter(dirOut);
+  ImgWriter imgWriter(imgOut, 3);
+  ArchiveBuilder builder(dirWriter, imgWriter);
+  const auto expectedDir = HexStrToBytes(
+    "00000000"
+    "02000000"
+    "66696C65322E746573740000000000000000000000000000"
+    "02000000"
+    "02000000"
+    "66696C65322E746573740000000000000000000000000000"
+  );
+  const auto expectedImg = HexStrToBytes(
+    "AABBCCDD0000"
+    "AABBCCDD0000"
+  );
+
+  builder.AddFile("file2.test");
+  builder.AddFile("file2.test");
+
+  EXPECT_EQ(expectedImg, GetWrittenBytes(imgOut));
+  EXPECT_EQ(expectedDir, GetWrittenBytes(dirOut));
+}
+
 TEST(BuildingArchiveWithTooLongNameShouldFail, ArchiveBuilderTests)
 {
   std::stringstream dirOut, imgOut;

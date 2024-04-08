@@ -41,3 +41,22 @@ TEST(ShouldThrowExceptionIfDirFileSizeIsWrong, DirEntryTests)
   }, UnexpectedEof);
 }
 
+TEST(ShouldReadDirWithDuplicateNamesCorrectly, DirEntryTests)
+{
+  const auto result = DirEntry::ParseDirFile("valid2_duplicate_filenames.dir");
+
+  const std::vector<DirEntry> expected = {
+    {
+      .sectorStart = 3,
+      .sectorCount = 5,
+      .fileName = "foo.bar"
+    },
+    {
+      .sectorStart = 5,
+      .sectorCount = 256,
+      .fileName = "foo.bar"
+    },
+  };
+
+  EXPECT_EQ(expected, result);
+}

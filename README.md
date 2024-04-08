@@ -52,6 +52,10 @@ archive.
 ./gta3-img-builder extract gta3.dir gta3.img output_directory > files_list.txt
 ```
 
+Creates sub-directories under the output directory for files with duplicate
+names. The sub-directory names are just numbers that are incremented for each
+conflict.
+
 ## Building a new archive
 ```
 ./gta3-img-builder build new.dir new.img files_list.txt
@@ -59,7 +63,6 @@ archive.
 
 The program takes a text file as a parameter. This file should include paths to
 all the files that are to be added to the .img archive.  The files are added
-with the same order as in the given list. The order of the files might matter
-on older hardware, for example if the game is going to load multiple files with
-one call.
+with the same order as in the given list. The order of some of the files is
+important because there are files with the same name in the original archive.
 

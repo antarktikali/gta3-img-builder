@@ -1,5 +1,6 @@
 #include "ImgExtracter.h"
 
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 
@@ -16,7 +17,13 @@ ImgExtracter::ImgExtracter(
     entries(entries),
     outDir(outDir),
     imgFile(imgFile)
-{}
+{
+  if (std::filesystem::exists(outDir)) {
+    if (!std::filesystem::is_directory(outDir) || !std::filesystem::is_empty(outDir)) {
+      throw OutputPathNotEmptyDirectory(outDir);
+    }
+  }
+}
 
 void ImgExtracter::Extract()
 {
@@ -38,12 +45,27 @@ std::vector<char> ImgExtracter::ReadSector(const uint32_t sectorIndex)
   return bytes;
 }
 
-void ImgExtracter::ProcessEntry(const DirEntry& entry)
+std::filesystem::path ImgExtracter::GetOutputPathForEntry(const DirEntry& entry) const
 {
   std::filesystem::path outFile = outDir / entry.fileName;
-  if (std::filesystem::exists(outFile)) {
-    throw FileAlreadyExists(outFile);
+  if (!std::filesystem::exists(outFile)) {
+    return outFile;
   }
+
+  for (size_t i = 1; i < std::numeric_limits<size_t>::max(); i++) {
+    outFile = outDir / std::to_string(i) / entry.fileName;
+    if (!std::filesystem::exists(outFile)) {
+      std::filesystem::create_directory(outDir / std::to_string(i));
+      return outFile;
+    }
+  }
+
+  throw FileAlreadyExists(outFile);
+}
+
+void ImgExtracter::ProcessEntry(const DirEntry& entry)
+{
+  const std::filesystem::path outFile = GetOutputPathForEntry(entry);
 
   std::ofstream out(outFile, std::ios::out | std::ios::binary);
   for (uint32_t i = 0; i < entry.sectorCount; i++) {
