@@ -6,7 +6,7 @@ information about the .img format can be found
 Only tested on GNU/Linux with [reVC](https://github.com/halpz/re3).
 
 # Building
-Cmake is used for building and running the tests. The test use gtest, which is
+Cmake is used for building and running the tests. The tests use gtest, which is
 automatically downloaded by cmake.
 
 ```
@@ -43,7 +43,7 @@ the format is platform dependent.
 ```
 
 Extracts the given archive and writtes the files to the given output directory.
-Also prints the path to the created files to the stdout. These paths can be
+Also prints the paths to the created files to the stdout. These paths can be
 captured to create a files_list.txt which can be used when building a new
 archive so that the order of files would be the same as in the original
 archive.
